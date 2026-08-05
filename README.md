@@ -58,6 +58,23 @@ El comportamiento de tus pipelines se define mediante tres conceptos clave:
 *Listo tenemos nuestro Circle CI con exito
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/be410ca5-f4d3-4787-8f5e-01246e6ff347" />
 
+*Ahora iremos a la seccion de pipelines y sale nuestro proyecto , ahora yo ire a mi repositorio de github de pruebas para modificar esto
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/624b02a3-557f-496b-b658-885e4fad9043" />
+
+*Este es el codigo .yaml que me dio circle CI y lo modificaremos aver que pasa , pondremos cualquier cosa
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/536db1c9-e7ca-444e-a86c-7fadc5f807d3" />
 
 
+* Por ejemplo yo le pondre todo este garabato
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/bd79c3dc-2219-45cd-9ed6-b9a83111445f" />
 
+
+* Si comiteeamos los cambio y volvemos al Circle CI Veremos que hay una falla pues detecto mi garabato XD
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/eb608343-6c25-4308-b5ec-c854e0200316" />
+
+
+* Si lo arreglamos en circle nos saldra que todo esta bien
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/1032c79a-29c8-4af6-aa81-c7c51770b378" />
+
+
+* y asi logramos que circle CI haga pruebas del codigo por ti y bloquear el paso del codigo defectuoso , lo que continua seria usar dockers para que empaquete nuestro codigo dentro de un container y podemos llevarlo a un registro como docker Hub o AWS ECR , mañana lo haremos porque tengo sueño zzzz descansen y gracias por ver #Contratenme
