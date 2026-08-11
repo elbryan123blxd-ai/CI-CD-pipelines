@@ -1,42 +1,56 @@
 version: 2.1
 
 jobs:
-  build-and-push:
+  build-and-deploy:
     docker:
-      - image: cimg/base:current
+      - image: cimg/python:3.10
     steps:
       - checkout
       - setup_remote_docker:
           version: default
 
-      # 1. Ejecutar pruebas unitarias antes de compilar
+      # 1. Instalar herramientas de AWS CLI y Docker client en el contenedor de CircleCI
+      - run:
+          name: Instalar dependencias de AWS CLI
+          command: |
+            sudo apt-get update && sudo apt-get install -y curl unzip
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+
+      # 2. Ejecutar pruebas unitarias antes de compilar
       - run:
           name: Ejecutar Pruebas
           command: |
-            sudo apt-get update && sudo apt-get install -y python3-pip
             pip install --break-system-packages -r requirements.txt
             pytest test.py
 
-      # 2. Login en Docker Hub
+      # 3. Autenticarse en AWS ECR
       - run:
-          name: Login en Docker Hub
+          name: Login en Amazon ECR
           command: |
-            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+            aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ECR_ACCOUNT_URL
 
-      # 3. Build de la imagen Docker
+      # 4. Construir la imagen Docker
       - run:
           name: Build de la imagen Docker
           command: |
-            docker build -t $DOCKER_USER/mi-app-flask:latest .
+            docker build -t mi-app-flask .
 
-      # 4. Push a Docker Hub
+      # 5. Etiquetar la imagen para que coincida con tu repositorio ECR
       - run:
-          name: Push de la imagen a Docker Hub
+          name: Tag de la imagen
           command: |
-            docker push $DOCKER_USER/mi-app-flask:latest
+            docker tag mi-app-flask:latest $AWS_ECR_ACCOUNT_URL/mi-app-flask:latest
+
+      # 6. Subir (Push) la imagen a Amazon ECR
+      - run:
+          name: Push de la imagen a AWS ECR
+          command: |
+            docker push $AWS_ECR_ACCOUNT_URL/mi-app-flask:latest
 
 workflows:
   version: 2
-  ci-workflow:
+  ci-cd-workflow:
     jobs:
-      - build-and-push
+      - build-and-deploy
