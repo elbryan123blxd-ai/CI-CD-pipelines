@@ -1,0 +1,42 @@
+version: 2.1
+
+jobs:
+  build-and-push:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: default
+
+      # 1. Ejecutar pruebas unitarias antes de compilar
+      - run:
+          name: Ejecutar Pruebas
+          command: |
+            sudo apt-get update && sudo apt-get install -y python3-pip
+            pip install -r requirements.txt
+            pytest test.py
+
+      # 2. Login en Docker Hub
+      - run:
+          name: Login en Docker Hub
+          command: |
+            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+
+      # 3. Build de la imagen Docker
+      - run:
+          name: Build de la imagen Docker
+          command: |
+            docker build -t $DOCKER_USER/mi-app-flask:latest .
+
+      # 4. Push a Docker Hub
+      - run:
+          name: Push de la imagen a Docker Hub
+          command: |
+            docker push $DOCKER_USER/mi-app-flask:latest
+
+workflows:
+  version: 2
+  ci-workflow:
+    jobs:
+      - build-and-push
