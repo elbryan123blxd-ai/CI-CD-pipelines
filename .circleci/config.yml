@@ -14,7 +14,7 @@ jobs:
           name: Ejecutar Pruebas
           command: |
             sudo apt-get update && sudo apt-get install -y python3-pip
-            pip install -r requirements.txt
+            pip install --break-system-packages -r requirements.txt
             pytest test.py
 
       # 2. Login en Docker Hub
