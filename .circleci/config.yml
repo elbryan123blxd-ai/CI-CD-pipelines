@@ -35,19 +35,19 @@ jobs:
       - run:
           name: Build de la imagen Docker
           command: |
-            docker build -t mi-app-flask .
+            docker build -t mi-app-flask:$CIRCLE_SHA1 .
 
       # 5. Etiquetar la imagen para que coincida con tu repositorio ECR
       - run:
           name: Tag de la imagen
           command: |
-            docker tag mi-app-flask:latest $AWS_ECR_ACCOUNT_URL/mi-app-flask:latest
+            docker tag mi-app-flask:$CIRCLE_SHA1 $AWS_ECR_ACCOUNT_URL/mi-app-flask:$CIRCLE_SHA1
 
       # 6. Subir (Push) la imagen a Amazon ECR
       - run:
           name: Push de la imagen a AWS ECR
           command: |
-            docker push $AWS_ECR_ACCOUNT_URL/mi-app-flask:latest
+            docker push $AWS_ECR_ACCOUNT_URL/mi-app-flask:$CIRCLE_SHA1
 
 workflows:
   version: 2
